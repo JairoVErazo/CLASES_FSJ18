@@ -16,7 +16,29 @@ function cargarEventos(){
 
     listaCursos.addEventListener('click', seleccionarCurso);
 
+    //Evento de escucha para vaciar carrito
+    vaciarCarrito.addEventListener('click', ()=>{
+        Swal.fire({
+            title: 'Estas seguro de vaciar el carrito?',
+            text: "Se eliminaran todos los cursos selecionados",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Si, vaciar carrito!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              Swal.fire(
+                'Se vació el carrito',
+                'Ya no tienes ningun curso',
+                'success'
+              ).then(function(){
+                window.location = "index.html";
+              })
+            }
+          })
 
+    })
 }
 
 /** Método para saber que curso seleccionó el usuario */
@@ -81,10 +103,63 @@ function leerDatosCurso(curso){
     //push => agrega un elemento al arreglo de ultimo
 
     console.table(arregloCarrito);
+    carritoTabla()
+}
+
+//metodo para iterar el arreglo y asignarlo en la tabla
+function carritoTabla(){
+    limpiarTabala();
+
+    arregloCarrito.map(item=>{
+        const tr = document.createElement('tr');
+
+        //slice => cadena, arreglo
+        let precio_actualizado = item.precio.substring(1);
+        let subTotal = Number(precio_actualizado * item.cantidad)
+
+        tr.innerHTML = `
+            <td>
+                <img src="${item.imagen}" width="100">
+            </td>
+            <td>${item.titulo}</td>
+            <td>${item.precio}</td>
+            <td>${item.cantidad}</td>
+            <td>${subTotal}</td>
+            <td>
+                <a href="#" class="borrar-item" data-id="${item.id}">
+            </td>
+        `;
+
+        //Agregamos la fila dentro del tbody
+        bodycarrito.appendChild(tr)
+
+    })
+}
+
+function limpiarTabala(){
+    while(bodycarrito.firstChild){
+        bodycarrito.removeChild(bodycarrito.firstChild);
+    }
 }
 
 
 function guardarPedido(){
-
+    Swal.fire({
+        title: 'Estás seguro de guardar el pediod?',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar pedido',
+        denyButtonText: `No guardar`,
+      }).then((result) => {
+        /* Read more about isConfirmed, isDenied below */
+        if (result.isConfirmed) {
+          Swal.fire('El pedido se cargara en tu targeta', '', 'success').then(function(){
+            //recarga la pagina index
+            window.location = "index.html"
+          })
+        } else if (result.isDenied) {
+          Swal.fire('Cambios no guardados', '', 'info')
+        }
+      })
 
 }
