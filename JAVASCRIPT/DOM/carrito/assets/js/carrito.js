@@ -97,8 +97,6 @@ function leerDatosCurso(curso){
         arregloCarrito.push(objetoCurso)
     }
 
-    
-
     //agregando el curso en un arreglo
     //push => agrega un elemento al arreglo de ultimo
 
@@ -108,8 +106,8 @@ function leerDatosCurso(curso){
 
 //metodo para iterar el arreglo y asignarlo en la tabla
 function carritoTabla(){
-    limpiarTabala();
-
+    limpiarTabala(bodycarrito);
+    let total_curso = 0;
     arregloCarrito.map(item=>{
         const tr = document.createElement('tr');
 
@@ -130,15 +128,25 @@ function carritoTabla(){
             </td>
         `;
 
+      total_curso += subTotal;
+
         //Agregamos la fila dentro del tbody
         bodycarrito.appendChild(tr)
-
     })
+
+    //creando fila para el tfoot (asignando el total de cursos)
+    limpiarTabala(footerCarrito);
+    const fila_foot = document.createElement('tr');
+    fila_foot.innerHTML = `
+    <td colspan ="4">Total de pedido</td>
+    <td>$${total_curso.toFixed(2)}</td>`;
+    footerCarrito.appendChild(fila_foot)
+
 }
 
-function limpiarTabala(){
-    while(bodycarrito.firstChild){
-        bodycarrito.removeChild(bodycarrito.firstChild);
+function limpiarTabala(contenedor){
+    while(contenedor.firstChild){
+        contenedor.removeChild(contenedor.firstChild);
     }
 }
 
@@ -162,4 +170,17 @@ function guardarPedido(){
         }
       })
 
+}
+
+//metodo para eliminar un curso en especifico
+function eliminarItem(e){
+  //verificando si la clase 'borrar-item' existe
+  if(e.target.classList.contains('borrar-item')){
+      //obtener el id del curso
+      const cursoId = e.target.getAttribute('data-id');
+      console.log(cursoId);
+      //filtrar todos los cursos que sean diferentes al id del curso que la persona selecciono
+      arregloCarrito = arregloCarrito.filter(curso => curso.id !== cursoId);
+      carritoTabla();
+  }
 }
